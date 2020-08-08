@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id ="app">
+    <cpn :cnum='num'></cpn>
+  </div>
+  <template id="cpn">
+    <div>
+      <ul>
+        <li v-for="(item, index) in cnum">{{item}}</li>
+      </ul>
+      <h2>{{cnum}}</h2>
+    </div>
+  </template>
+  <script src="js/vue.js"></script>
+  <script>
+    const cpn = {
+      template: '#cpn',
+      props: {
+        cnum: {
+          type: Array,
+          default() {
+            return ['1']
+          },
+          required: true // 必传属性设置
+        }
+      }
+    }
+    const app = new Vue({
+      el: '#app',
+      data: {
+        message: "你好啊",
+        num: ['1','2','3']
+      },
+      components: {
+        cpn
+      }
+    });
+  </script>
+
+</body>
+</html>

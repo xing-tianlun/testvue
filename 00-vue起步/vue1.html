@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div>{{mag}}</div>
+        <input type="text" v-model="mag">
+        <div>{{num1}}</div>
+        <button v-on:click="add()">按钮1</button>
+        <button @click="add()">按钮2</button> 
+    </div>
+    <div id="jjj">
+        <div>
+            <span>数值A:</span>
+            <span>
+                <input type="text" v-model="a">
+            </span>
+        </div>
+        <div>
+            <span>数值B:</span>
+            <span>
+                <input type="text" v-model="b">
+            </span>
+        </div>
+        <div>
+            <button @click='handle' v-color='msg'>计算</button>
+        </div>
+        <div >
+            <span>计算结果:</span>
+            <span v-text='result'></span>
+        </div>
+        <input type="text" v-focus>
+    </div>
+    <div id="iii">
+        <div>{{date | format('abc','nihao')}}</div>
+    </div>
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                mag: 'hello vue',
+                num1: '0'
+            },
+            methods: {
+                // 这里的this是Vue的实例对象vm
+                add: function() {
+                    this.num1++;
+                }
+            }
+        })
+
+        // Vue.directive('color',{
+        //     bind: function(el, binding) {
+        //         console.log(binding.value.color);
+        //         el.style.backgroundColor = binding.value.color;
+        //     }
+        // })// 全局指令的定义
+
+        var vm2 = new Vue({
+            el: '#jjj',
+            data: {
+                a: '',
+                b: '',
+                result: '',
+                msg: {
+                    color: 'orange'
+                }
+            },
+            methods: {
+                handle: function() {
+                    this.result = Number(this.a) + Number(this.b)
+                }
+            },
+            directives: {// 局部指令的定义
+                color: {
+                    bind: function(el, binding) {
+                        console.log(binding.value.color);
+                        el.style.backgroundColor = binding.value.color;
+                    }
+                },// 定义多个局部指令在directives选项中用逗号隔开，可以定义多个局部指令
+                focus: {
+                    inserted: function(el) {
+                        el.focus();
+                    }
+                }
+            }
+        })
+        
+    </script>
+    <script>
+        Vue.filter('format',function(value,arg,arg1) {
+            console.log(value,arg,arg1)
+            return value
+        })
+        var vm2 = new Vue({
+            el: '#iii',
+            data: {
+                date: new Date()
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/vue.js"></script>
+    <style>
+        .grid {
+            margin: auto;
+            width: 500px;
+            text-align: center;
+        }
+        .grid table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .grid .book {
+            padding: 10;
+            background: orange;
+            line-height: 35px;
+        }
+        .grid th,td {
+            padding: 10;
+            border: 1px  dashed orange;
+            height: 35px;
+            line-height: 35px;
+        }
+        .grid th {
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="grid">
+            <div>
+                <h1>图书管理</h1>
+                <div class="book">
+                    <div>
+                        <label for="id">编号：</label>
+                        <input type="text" id='id' v-model="id" :disabled="flag" v-focus>
+                        <label for="name">名称：</label>
+                        <input type="text" id="name" v-model="name">
+                        <button @click='handle' :disabled='submitFlag'>提交</button>
+                    </div>
+                </div>
+            </div>
+            <div class="total">
+                <span>图书总数：</span>
+                <span>{{total}}</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>名称</th>
+                        <th>时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr :key='item.id' v-for='item in books'>
+                        <td>{{item.id}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.date}}</td>
+                        <td>
+                            <a href="" @click.prevent='toEdit(item.id)'>修改</a>
+                            <span>|</span>
+                            <a href="" @click.prevent='deleteBook(item.id)'>删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        Vue.directive('focus',{
+            inserted: function(el) {
+                el.focus();
+            }
+        });
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                flag: false,
+                submitFlag: false,
+                id: '',
+                name: '',
+                books: []
+            },
+            methods: { // 方法
+                handle: function() {
+                    if(this.flag) {
+                        // 编辑操作
+                        // 就是根据当前的id去更新数组中对应的数据
+                        this.books.some((item) => {
+                            if(item.id == this.id) {
+                                item.name = this.name;
+                                // 完成更新操作之后，需要终止循环
+                                return true;
+                            }
+                        })
+                        this.flag = false;
+                    }else {
+                        // console.log(this.id,this.name);
+                        // 添加图书
+                        var book = {};
+                        book.id = this.id;
+                        book.name = this.name;
+                        book.date = '';
+                        this.books.push(book);
+                        // 清空表单
+                        this.id = '';
+                        this.name = '';
+                    }
+                    this.id = '';
+                    this.name = '';
+                },
+                toEdit: function(id) {
+                    // 禁止修改id
+                    this.flag = true;
+                    console.log(id);
+                    // 根据id查询要编辑的数据
+                    var book = this.books.filter(function(item) {
+                        return item.id == id;
+                    });
+                    console.log(book);
+                    // 把获取到的信息填充到表单
+                    this.id = book[0].id;
+                    this.name = book[0].name;
+                },
+                deleteBook: function(id) {
+                    // 删除图书
+                    // 根据id 从数组中查找元素索引
+                    // --------------------------
+                    //方法一：
+                    // var index = this.books.findIndex(function(item) {
+                    //     return item.id == id;
+                    // });
+                    // // 根据索引删除数组元素
+                    // this.books.splice(index,1);
+                    // -----------------------------
+                    // 方法二：通过filter方法进行删除
+                    this.books = this.books.filter(function(item) {
+                        return item.id != id;
+                    });
+
+                }
+            },
+            computed: {// 计算属性
+                total: function() {
+                    return this.books.length;
+                }
+            },
+            watch: {// 侦听器
+                name: function(val) {
+                    // 验证图书名称是否已经存在
+                    var flag = this.books.some(function(item) {
+                        return item.name == val;
+                    });
+                    if(flag) {
+                        // 图书名称存在
+                        this.submitFlag = true;
+                    }else {
+                        // 图书名称不存在
+                        this.submitFlag = false;
+                    }
+                }
+            },
+            mounted: function() {
+                // 该生命周期钧子函数被触发的时候，模板已经可以使用
+                // 一般此时用于获取后台数据，然后把数据填充到模板
+                var data = [{
+                    id: 1,
+                    name: '三国',
+                    date: ''
+                },{
+                    id: 2,
+                    name: '水浒',
+                    date: ''
+                },{
+                    id: 3,
+                    name: '红楼',
+                    date: ''
+                },{
+                    id: 4,
+                    name: '西游',
+                    date: ''
+                }];
+                this.books = data;
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id ="app">
+    <cpn @item-click="cpnclick"></cpn>
+  </div>
+  <template id="cpn">
+    <div>
+      <button v-for="(item, index) in btns" :key="index" @click="btnclick(item)">
+        {{item.name}}
+      </button>
+    </div>
+  </template>
+  <script src="js/vue.js"></script>
+  <script>
+    const cpn = {
+      template: '#cpn',
+      data() {
+        return {
+          btns: [
+            {id: 'aaa',name: '热门推荐'},
+            {id: 'bbb',name: '家用家电'},
+            {id: 'ccc',name: '办公用品'},
+            {id: 'ddd',name: '手机用品'}
+          ]
+        }
+      },
+      methods: {
+        btnclick(item) {
+          this.$emit('item-click',item)
+        }
+      }
+    }
+    const app = new Vue({
+      el: '#app',
+      data: {
+        message: "你好啊"
+      },
+      methods: {
+        cpnclick(item) {
+          console.log('cpnclick',item)
+        }
+      },
+      components: {
+        cpn
+      }
+    });
+  </script>
+
+</body>
+</html>
